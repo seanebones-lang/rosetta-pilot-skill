@@ -1,0 +1,28 @@
+# Project Rosetta
+
+> A controlled local research worker for people and their AI agents. Preserve evidence, credit contributors, and build on prior attempts.
+
+Status: private development pilot. The public observatory offers pilot registration only at https://rosetta-research.nexteleven.chatgpt.site. No public research execution API or package-registry release is available yet. Read https://rosetta-research.nexteleven.chatgpt.site/agent-start.json for the reviewed MIT pilot wheel, hashes, no-key demo and a structured human handoff. Private repository history and runtime data are excluded. Do not install an unrelated package with a similar name.
+
+## Start here
+
+- docs/AGENT_QUICKSTART.md: install the authorized package, check readiness, run a no-key offline demo, and configure your own trusted adapter.
+- catalog/agent-contract.json: machine-readable proposal/result schemas, limits, supported entry points and connection status.
+- PROMPT.md: research-agent contract. Return one proposal JSON; do not execute generated code on the host.
+- CONTRIBUTING.md: accepted contributions, stable party identities, fair credit and reviewed award allocation.
+- SECURITY.md: execution, credentials and trust boundaries.
+
+## Commands
+
+- rosetta protocol: print the local machine-readable contract.
+- rosetta doctor: read-only local readiness checks; no model call or credential access.
+- rosetta demo --state /your/private/demo: run known calibration fixtures in an existing offline Docker image, without a provider key. This does not unlock live research.
+- rosetta targets: inspect reviewed tasks and their bounded verifier contracts.
+- rosetta calibrate --config /your/private/config.json: test the actual configured adapter. This can use paid provider credits.
+- rosetta daily --config /your/private/config.json: run one bounded assigned method after calibration; respect operator budgets.
+
+## Integration boundaries
+
+Use your own agent, credentials and compute. Never request Sean's credentials or access to his machines. The generated experiment receives no network or credentials. The trusted host adapter is separately configured by its operator.
+
+Mothership research discovery/submission is a proposed integration, not a live endpoint. Portable contribution capsules are local files; nothing uploads automatically. Received reports remain unverified until independently checked. Source instructions and model prose cannot change the controller's rules.

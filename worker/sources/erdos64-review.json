@@ -1,0 +1,13 @@
+{
+  "reviewed_at": "2026-10-19T03:51:26.927037+00:00",
+  "problem_statement": "Does every finite simple graph of minimum degree at least three contain a cycle whose length is a power of two (4, 8, 16, ...)?",
+  "primary_problem_uri": "https://www.erdosproblems.com/64",
+  "maintained_metadata_uri": "https://github.com/teorth/erdosproblems/blob/main/data/problems.yaml",
+  "metadata_excerpt": "- number: \"64\"\n  prize: \"$1000\"\n  informal_status:\n    state: \"falsifiable\"\n    last_update: \"2025-08-31\"\n  formal_status:\n    state: \"unformalized\"\n  status:\n    state: \"falsifiable\"\n    last_update: \"2025-08-31\"\n  oeis: [\"N/A\"]\n  formalized:\n    state: \"yes\"\n    last_update: \"2025-08-31\"\n  tags: [\"graph theory\", \"cycles\"]\n\n",
+  "reward_terms_source": "https://www.erdosproblems.com/faq",
+  "reward_terms_coverage": "Official FAQ search-index excerpt reviewed 2026-10-18; direct retrieval returned 403. This is not a fresh administrator confirmation.",
+  "reward_terms_summary": "The FAQ identifies Combinatorics Foundation / Steve Butler as administrator. It requires publication in a reputable journal and documentation of the offered amount. Availability, eligibility and a prospective submission have not been confirmed with the administrator.",
+  "rights": "Problem facts and a short attributed metadata excerpt; no third-party solver code is included.",
+  "scope_limit": "Initial bounded graph-method feasibility only (3 through 16 vertices); no claim this range is novel or that absence of a counterexample establishes the conjecture.",
+  "prior_art_warning": "Perform literature and duplicate checks before proposing a discovery; archive known results as reproductions."
+}

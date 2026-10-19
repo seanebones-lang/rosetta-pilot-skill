@@ -5,3 +5,6 @@ __pycache__/
 report.json
 
 dist/
+
+worker/build/
+worker/*.egg-info/

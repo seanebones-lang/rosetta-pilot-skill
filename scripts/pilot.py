@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit, no-key onboarding for the pinned public Rosetta 0.2.2 pilot."""
+"""Explicit, no-key onboarding for the pinned public Rosetta 0.2.3 pilot."""
 from __future__ import annotations
 
 import argparse
@@ -8,16 +8,23 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import subprocess
 import sys
 import urllib.request
 import zipfile
 
 ORIGIN = 'https://rosetta-research.nexteleven.chatgpt.site'
-WHEEL = 'rosetta_research-0.2.2-py3-none-any.whl'
+WHEEL = 'rosetta_research-0.2.3-py3-none-any.whl'
 CAPSULE = 'calibration-c5-capsule.zip'
+# Environment reduction for trusted host tools, not a host security sandbox.
+KEEP_ENV = frozenset({'PATH', 'HOME', 'USER', 'LANG', 'LC_ALL', 'TMPDIR',
+                      'DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_CONFIG',
+                      'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH'})
+INTEGRITY_EXIT = 3
+INTEGRITY_CODE = 'CAPSULE_HASH_MISMATCH'
 ARTIFACTS = {
-    WHEEL: ('/downloads/' + WHEEL, 'de0ceaa78e4ea803053aac30eb87d528d05283c5d9d8c5c54915792b04b07f2e', 47064),
+    WHEEL: ('/downloads/' + WHEEL, '704299511211b34a7c147bff71fcfe9e4226dd60fa173fefe55acb90cfb60068', 47973),
     CAPSULE: ('/examples/' + CAPSULE, '990fa756245825f4ed4621bb83f17a7eb663b852215a13d8f8e95a5c4c342105', 1369),
 }
 
@@ -50,9 +57,9 @@ def fetch(name, folder):
 
 
 def invoke(args, folder, name, timeout=90, expect=0):
-    # No shell expansion or provider credential inheritance into subprocesses.
-    env = {k: v for k, v in os.environ.items()
-           if not any(x in k.upper() for x in ('TOKEN', 'API_KEY', 'PASSWORD', 'SECRET'))}
+    # Keep only runtime/locale and explicitly selected Docker connection settings.
+    # HOME/Docker access still confer authority: this is not process isolation.
+    env = {k: v for k, v in os.environ.items() if k in KEEP_ENV}
     env['PIP_DISABLE_PIP_VERSION_CHECK'] = '1'
     result = subprocess.run([str(a) for a in args], cwd=folder, env=env,
                             stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=timeout)
@@ -70,10 +77,19 @@ def check(condition, message):
         raise Stopped(message)
 
 
+def object_output(result, name):
+    try:
+        value = json.loads(result.stdout)
+    except (ValueError, TypeError):
+        raise Stopped(name + ' returned invalid JSON; inspect its private output.') from None
+    check(isinstance(value, dict), name + ' returned a non-object JSON response.')
+    return value
+
+
 def run(folder, image):
     report = {'schema_version': 1, 'test': 'public_offline_onboarding', 'status': 'incomplete',
               'os': platform.system(), 'python': platform.python_version(),
-              'wheel_version': '0.2.2', 'checks': {}, 'uploaded': False,
+              'wheel_version': '0.2.3', 'checks': {}, 'uploaded': False,
               'discovery_confirmed': False, 'live_research_tested': False,
               'outside_machine_verified': False,
               'sharing': 'Review and manually share only this bounded report with an approved recipient.'}
@@ -85,17 +101,21 @@ def run(folder, image):
         cli = folder / '.venv/bin/rosetta'
         invoke([python, '-m', 'pip', 'install', '--no-index', '--no-deps', str(folder / WHEEL)], folder, 'install')
         invoke([cli, 'protocol'], folder, 'protocol')
-        doctor = json.loads(invoke([cli, 'doctor', '--image', image], folder, 'doctor').stdout)
+        doctor = object_output(invoke([cli, 'doctor', '--image', image], folder, 'doctor'), 'doctor')
         check(doctor.get('status') == 'demo_ready', 'Local setup is incomplete; inspect doctor.json. No demo executed.')
-        resolved = doctor['image_id']
+        resolved = doctor.get('image_id')
+        check(isinstance(resolved, str) and re.fullmatch(r'sha256:[0-9a-f]{64}', resolved),
+              'doctor did not return a resolved image ID; no demo executed.')
         report['image_id'] = resolved
         report['docker'] = invoke(['docker', 'version', '--format', '{{.Server.Version}}'], folder, 'docker-version', timeout=15).stdout.strip()
-        demo = json.loads(invoke([cli, 'demo', '--state', str(folder / 'state'), '--image', resolved], folder, 'demo').stdout)
+        demo = object_output(invoke([cli, 'demo', '--state', str(folder / 'state'), '--image', resolved], folder, 'demo'), 'demo')
         check(demo.get('status') == 'passed' and demo.get('provider_calls') == 0
               and demo.get('test_kind') == 'offline_fixture' and demo.get('live_research_unlocked') is False,
               'Demo result did not meet the known-fixture criteria.')
         report['checks']['demo'] = 'passed'
-        replay = json.loads(invoke([cli, 'replay', str(folder / CAPSULE), '--image', resolved], folder, 'replay').stdout)
+        replay = object_output(invoke([cli, 'replay', str(folder / CAPSULE), '--image', resolved], folder, 'replay'), 'replay')
+        check(isinstance(replay.get('outcome'), dict) and isinstance(replay.get('execution'), dict),
+              'replay returned invalid nested result objects.')
         check(replay.get('outcome', {}).get('status') == 'calibration_passed'
               and replay.get('execution', {}).get('exit_code') == 0
               and replay.get('execution', {}).get('network') == 'none'
@@ -110,7 +130,13 @@ def run(folder, image):
                 target.writestr(name, data)
         rejection = invoke([cli, 'replay', str(folder / 'tampered-capsule.zip'), '--image', resolved],
                            folder, 'tampered-replay', expect=None)
-        check(rejection.returncode != 0 and 'capsule artifact hash mismatch' in rejection.stderr,
+        try:
+            error = json.loads(rejection.stderr)
+        except (ValueError, TypeError):
+            error = None
+        check(rejection.returncode == INTEGRITY_EXIT and isinstance(error, dict)
+              and isinstance(error.get('error'), dict)
+              and error['error'].get('code') == INTEGRITY_CODE,
               'Altered capsule was not rejected for the expected integrity failure.')
         report['checks']['tampered_capsule'] = 'rejected_hash_mismatch'
         report['status'] = 'passed'
@@ -119,6 +145,11 @@ def run(folder, image):
         report['status'] = 'stopped'
         # A bounded local diagnostic; never include raw provider/session logs.
         report['reason'] = str(error).replace(str(folder), '<test-directory>')[:500]
+    except Exception as error:
+        # Preserve a stopped receipt for unexpected failures without echoing
+        # arbitrary exception values, which may contain credentials or paths.
+        report['status'] = 'stopped'
+        report['reason'] = 'Unexpected local error (' + type(error).__name__ + '); inspect private outputs.'
     save(folder / 'report.json', report)
     return report
 

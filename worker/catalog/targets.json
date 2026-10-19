@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "targets": [
+    {
+      "id": "calibration-c5",
+      "kind": "calibration",
+      "enabled": true,
+      "statement": "Calibration only: refute the false claim that every finite simple graph of minimum degree two contains a four-cycle. This is known solved and has no prize.",
+      "minimum_degree": 2,
+      "forbidden_lengths": [
+        4
+      ],
+      "methods": [
+        "construct-an-odd-cycle"
+      ],
+      "sources": [],
+      "reward": null
+    },
+    {
+      "id": "erdos-64",
+      "kind": "research",
+      "enabled": false,
+      "statement": "Does every finite simple graph of minimum degree at least three contain a cycle whose length is a power of two (4, 8, 16, ...)?",
+      "minimum_degree": 3,
+      "forbidden_lengths": [
+        4,
+        8,
+        16
+      ],
+      "methods": [
+        "seeded-cubic-graph-feasibility",
+        "bipartite-cubic-graph-feasibility",
+        "circulant-graph-feasibility",
+        "small-graph-construction-feasibility"
+      ],
+      "sources": [
+        {
+          "path": "sources/erdos64-review.json",
+          "sha256": "0e6c3d38a6c7ff0add474c1b9dbdfc7f59e6864495efaf7847858065ab021bb9",
+          "checked_at": "2026-10-19T03:51:26.927037+00:00",
+          "uri": "https://www.erdosproblems.com/64"
+        },
+        {
+          "path": "sources/erdos64-literature-20261019.json",
+          "sha256": "d6406ad43ce715f2780df195dbbee77977c345d1b432cf19b14d69afd8b57e97",
+          "checked_at": "2026-10-19T06:07:17.074611+00:00",
+          "uri": "https://arxiv.org/html/2609.28594v1"
+        }
+      ],
+      "reward": {
+        "listed_usd": 1000,
+        "status": "documented_offer_not_confirmed_payable",
+        "administrator": "Combinatorics Foundation",
+        "terms_uri": "https://www.erdosproblems.com/faq",
+        "eligibility_confirmed": false,
+        "funding_confirmed": false
+      },
+      "scope_limit": "Historical 3-16 vertex infrastructure regression sample in known territory; not an exhaustive replication or a new-research assignment.",
+      "review_status": "paused_for_literature_and_verifier_review",
+      "pause_reason": "Reviewed preprints report substantially larger bounds. Current verifier accepts at most 16 vertices. No frontier search is enabled."
+    }
+  ]
+}

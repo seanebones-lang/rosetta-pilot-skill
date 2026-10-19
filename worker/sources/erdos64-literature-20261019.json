@@ -1,0 +1,32 @@
+{
+  "reviewed_at": "2026-10-19T06:07:17.074611+00:00",
+  "sources": [
+    {
+      "uri": "https://arxiv.org/html/2609.28594v1",
+      "title": "Towards a more structured search for Erdos-Gyarfas counter-examples",
+      "authors": [
+        "Guillaume Ducoffe",
+        "Bogdan Dumitru"
+      ],
+      "submitted": "2026-09-23",
+      "reported_bounds": {
+        "general_graph_order_at_most": 40,
+        "bipartite_graph_order_at_most": 66,
+        "cubic_graph_order_at_most": 48
+      },
+      "verification_status": "Authors report these computations; Rosetta has not reproduced their searches or reviewed all proofs.",
+      "method": "SAT modulo symmetries with forbidden-cycle propagation; accompanying source/output repository.",
+      "artifact_limit": "Section 5.7 says resolution proofs were not emitted; independent reruns are required."
+    },
+    {
+      "uri": "https://arxiv.org/html/2609.04686v1",
+      "title": "Small graphs without power-of-two cycles",
+      "author": "Daniel Garcia",
+      "submitted": "2026-09-04",
+      "reported_result": "SAT search excluding minimum-degree-three graphs without 4- or 8-cycles through order 23, with DRAT checking.",
+      "verification_status": "Reported preprint result; not reproduced by Rosetta."
+    }
+  ],
+  "local_assessment": "The existing 4-16-vertex random sample is an infrastructure regression sample in previously studied territory. It is not exhaustive replication or frontier research.",
+  "future_gate": "Disable new erdos-64 assignments until literature, proof/coverage contracts, verifier scalability and resource budgets are reviewed. Cubic graphs have even order; any frontier proposal must also check all realizable power-of-two cycle lengths."
+}

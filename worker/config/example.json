@@ -1,0 +1,9 @@
+{
+  "state_dir": "~/.local/state/rosetta",
+  "timezone": "America/Chicago",
+  "image": "python:3.12-slim-bookworm",
+  "agent_command": ["/absolute/path/to/your/adapter"],
+  "agent_identity": {"id": "your-agent", "model": "exact-model-version"},
+  "daily_target": "erdos-64",
+  "witness": null
+}

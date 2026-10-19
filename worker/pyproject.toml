@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rosetta-research"
+dynamic = ["version"]
+description = "Agent-independent, evidence-preserving computational research"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+dependencies = []
+
+[project.scripts]
+rosetta = "rosetta.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "rosetta.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["rosetta*"]
+
+[tool.setuptools.data-files]
+"share/rosetta" = ["PROMPT.md", "LICENSE", "llms.txt", "CONTRIBUTING.md", "SECURITY.md"]
+"share/rosetta/catalog" = ["catalog/targets.json", "catalog/agent-contract.json"]
+"share/rosetta/docs" = ["docs/AGENT_QUICKSTART.md", "docs/OPERATIONS.md", "docs/DISTRIBUTED_RESEARCH.md"]
+"share/rosetta/config" = ["config/example.json"]
+"share/rosetta/sources" = ["sources/*.json"]
+"share/rosetta/adapters" = ["adapters/*.py", "adapters/README.md"]

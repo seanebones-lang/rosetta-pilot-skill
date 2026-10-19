@@ -17,20 +17,27 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s tests -v
+      - name: Test public worker snapshot
+        run: PYTHONPATH=worker python -m unittest discover -s worker/tests -v
+      - name: Install pinned build tools from the package registry
+        run: python -m pip install setuptools==84.0.0 wheel==0.48.0 packaging==26.3
       - name: Validate release tag and package reviewed files
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           python -c 'import os,re,pathlib; v=re.search(r"^  version: (.+)$",pathlib.Path("SKILL.md").read_text(),re.M).group(1); assert os.environ["RELEASE_TAG"] == "v"+v'
+          python scripts/build_worker.py
           python scripts/package_skill.py
-      - name: Attest only the skill archive built from this source
+      - name: Attest the skill archive and worker built from this source
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
         with:
-          subject-path: dist/rosetta-pilot-skill-*.zip
+          subject-path: |
+            dist/rosetta-pilot-skill-*.zip
+            dist/rosetta_research-*.whl
       - name: Publish immutable release assets
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          gh release create "$RELEASE_TAG" dist/rosetta-pilot-skill-*.zip dist/SHA256SUMS --verify-tag --title "Rosetta pilot skill $RELEASE_TAG" --notes "Known offline calibration and tamper rejection only. Research assignments are paused. The provenance attestation covers this skill archive and its pinned worker digest; it does not attest that the separately downloaded worker was built by this workflow. Inspect the source and verify with gh attestation verify before use."
+          gh release create "$RELEASE_TAG" dist/rosetta-pilot-skill-*.zip dist/rosetta_research-*.whl dist/SHA256SUMS --verify-tag --title "Rosetta pilot skill $RELEASE_TAG" --notes "Known offline calibration and tamper rejection only. Research assignments are paused. Both the skill archive and MIT worker wheel are built from this public tag and receive GitHub build-provenance attestations. This identifies the build, not code safety or scientific truth. Inspect the source and verify with gh attestation verify before use."

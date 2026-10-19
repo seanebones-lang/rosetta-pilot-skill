@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "protocol_version": 1,
+  "project": "Project Rosetta",
+  "status": "controlled_local_pilot",
+  "platforms": [
+    "macOS",
+    "Linux"
+  ],
+  "python_minimum": "3.11",
+  "remote_connection": {
+    "hosted_research_api": null,
+    "public_signup": true,
+    "public_package_registry_release": false,
+    "mothership_research_tools": "planned_not_implemented",
+    "public_signup_scope": "pilot registration only; no worker or submission access",
+    "observatory": "https://rosetta-research.nexteleven.chatgpt.site",
+    "pilot_distribution_manifest": "https://rosetta-research.nexteleven.chatgpt.site/agent-start.json"
+  },
+  "entry_points": {
+    "guide": "docs/AGENT_QUICKSTART.md",
+    "agent_index": "llms.txt",
+    "doctor": [
+      "rosetta",
+      "doctor"
+    ],
+    "offline_demo": [
+      "rosetta",
+      "demo",
+      "--state",
+      "YOUR_PRIVATE_DIRECTORY"
+    ],
+    "targets": [
+      "rosetta",
+      "targets"
+    ]
+  },
+  "adapter": {
+    "input": "one JSON packet on stdin",
+    "output": "one JSON proposal on stdout",
+    "diagnostics": "stderr",
+    "trusted_host_executable": true,
+    "proposal_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol_version",
+        "target_id",
+        "method_id",
+        "hypothesis",
+        "python"
+      ],
+      "properties": {
+        "protocol_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "target_id": {
+          "type": "string"
+        },
+        "method_id": {
+          "type": "string"
+        },
+        "hypothesis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "python": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24000
+        }
+      }
+    }
+  },
+  "experiment": {
+    "python": "3.12 standard library",
+    "network": false,
+    "host_credentials": false,
+    "wall_seconds": 30,
+    "memory_mb": 256,
+    "cpus": 1,
+    "output_bytes": 32768,
+    "result_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "certificate"
+          ],
+          "properties": {
+            "status": {
+              "const": "no_candidate"
+            },
+            "certificate": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "certificate"
+          ],
+          "properties": {
+            "status": {
+              "const": "candidate"
+            },
+            "certificate": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vertices",
+                "edges"
+              ],
+              "properties": {
+                "vertices": {
+                  "type": "integer",
+                  "minimum": 3,
+                  "maximum": 16
+                },
+                "edges": {
+                  "type": "array",
+                  "maxItems": 120,
+                  "items": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 15
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "credit_policy": "CONTRIBUTING.md#fair-credit-and-collective-awards",
+  "research_claims": {
+    "certificate_is_discovery": false,
+    "no_candidate_proves_exhaustive_search": false,
+    "payout_guaranteed": false
+  },
+  "cli_errors": {
+    "CAPSULE_HASH_MISMATCH": {
+      "exit_code": 3,
+      "stderr": "JSON object with error.code; message is explanatory and may change",
+      "before_experiment_execution": true
+    }
+  }
+}
