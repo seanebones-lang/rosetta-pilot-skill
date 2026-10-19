@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit, no-key onboarding for the pinned public Rosetta 0.2.0 pilot."""
+"""Explicit, no-key onboarding for the pinned public Rosetta 0.2.1 pilot."""
 from __future__ import annotations
 
 import argparse
@@ -14,10 +14,10 @@ import urllib.request
 import zipfile
 
 ORIGIN = 'https://rosetta-research.nexteleven.chatgpt.site'
-WHEEL = 'rosetta_research-0.2.0-py3-none-any.whl'
+WHEEL = 'rosetta_research-0.2.1-py3-none-any.whl'
 CAPSULE = 'calibration-c5-capsule.zip'
 ARTIFACTS = {
-    WHEEL: ('/downloads/' + WHEEL, 'd828a74790e6facb4ccd02a89346b8daaa277382fbccc2df5c30a8434a2f87cc', 45491),
+    WHEEL: ('/downloads/' + WHEEL, '3160c2de326d0b1662ccb24698ec03237ab116d9d3663834f7e26ccf7d55fec8', 47063),
     CAPSULE: ('/examples/' + CAPSULE, '990fa756245825f4ed4621bb83f17a7eb663b852215a13d8f8e95a5c4c342105', 1369),
 }
 
@@ -73,7 +73,7 @@ def check(condition, message):
 def run(folder, image):
     report = {'schema_version': 1, 'test': 'public_offline_onboarding', 'status': 'incomplete',
               'os': platform.system(), 'python': platform.python_version(),
-              'wheel_version': '0.2.0', 'checks': {}, 'uploaded': False,
+              'wheel_version': '0.2.1', 'checks': {}, 'uploaded': False,
               'discovery_confirmed': False, 'live_research_tested': False,
               'outside_machine_verified': False,
               'sharing': 'Review and manually share only this bounded report with an approved recipient.'}

@@ -1,0 +1,36 @@
+name: Build and attest skill release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -v
+      - name: Validate release tag and package reviewed files
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python -c 'import os,re,pathlib; v=re.search(r"^  version: (.+)$",pathlib.Path("SKILL.md").read_text(),re.M).group(1); assert os.environ["RELEASE_TAG"] == "v"+v'
+          python scripts/package_skill.py
+      - name: Attest only the skill archive built from this source
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: dist/rosetta-pilot-skill-*.zip
+      - name: Publish immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/rosetta-pilot-skill-*.zip dist/SHA256SUMS --verify-tag --title "Rosetta pilot skill $RELEASE_TAG" --notes "Known offline calibration and tamper rejection only. Research assignments are paused. The provenance attestation covers this skill archive and its pinned worker digest; it does not attest that the separately downloaded worker was built by this workflow. Inspect the source and verify with gh attestation verify before use."
