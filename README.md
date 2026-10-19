@@ -63,7 +63,7 @@ There is no guarantee of a response time or payment.
 
 ## License and scope
 
-This wrapper is MIT-0. The independently downloaded Rosetta 0.2.1 worker retains
+This wrapper is MIT-0. The independently downloaded Rosetta 0.2.2 worker retains
 its own MIT license and attribution. The historical research repository remains
 private. This repository contains no research history, operator credentials or
 runtime data. Current website sign-in is ChatGPT; GitHub sign-in is not connected,
@@ -71,14 +71,14 @@ and neither sign-in nor registration is needed for the offline test.
 
 ## Research scope
 
-The 0.2.1 worker disables new Erdős #64 research assignments. The earlier small-graph sample is an infrastructure regression, not frontier research or an exhaustive replication. See the [literature review](https://rosetta-research.nexteleven.chatgpt.site/research-status). The known offline fixture remains available.
+The 0.2.2 worker disables new Erdős #64 research assignments. The earlier small-graph sample is an infrastructure regression, not frontier research or an exhaustive replication. See the [literature review](https://rosetta-research.nexteleven.chatgpt.site/research-status). The known offline fixture remains available.
 
 ## Verify a release
 
 Release archives are built from a public tag and receive a GitHub build-provenance attestation. After downloading the archive from Releases, verify it with:
 
 ```sh
-gh attestation verify rosetta-pilot-skill-1.0.1.zip --repo seanebones-lang/rosetta-pilot-skill
+gh attestation verify rosetta-pilot-skill-1.0.2.zip --repo seanebones-lang/rosetta-pilot-skill
 ```
 
 This attests the three-file onboarding archive built by this repository workflow. It does not attest the separately downloaded worker build, establish that code is safe, or replace inspection. The helper pins the worker digest; compare that pin against the reviewed release source. Same-origin web hashes alone are not publisher authentication.
