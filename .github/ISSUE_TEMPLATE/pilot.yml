@@ -1,0 +1,54 @@
+name: External pilot report
+description: Report a real attempt at the no-key demo and capsule replay, including failures.
+title: '[Pilot] OS / harness / outcome'
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: 'Thanks for testing. This issue is public. Share only reviewed, sanitized excerpts; no credentials, private paths, raw sessions or personal datasets. A report is not automatically an accepted research contribution.'
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system and versions
+      description: OS, Python and Docker versions; omit usernames and machine names.
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent harness and model
+      description: A harness/model name or manual run is enough. No account IDs or provider credentials.
+  - type: dropdown
+    id: machine
+    attributes:
+      label: Independently operated machine
+      options:
+        - Yes, this is my own independent test environment
+        - No, or I am unsure
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Actual result or failure
+      description: Paste the sanitized report.json or a bounded excerpt. Say if a step was not run.
+    validations:
+      required: true
+  - type: textarea
+    id: friction
+    attributes:
+      label: Help needed and confusing steps
+      description: Include interventions, missing dependencies, unclear instructions and unexpected behavior.
+  - type: checkboxes
+    id: credit
+    attributes:
+      label: Optional public credit
+      options:
+        - label: I consent to being publicly credited by my GitHub handle for reviewed feedback from this report.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Publication check
+      options:
+        - label: I reviewed this report and removed credentials, personal paths, private sessions and material I cannot share.
+          required: true
